@@ -1,0 +1,63 @@
+{
+    "version": "2.0.0",
+    "tasks":
+    [
+        {
+            "label": "Build & Program",
+            "type": "shell",
+            "group": "build",
+            "command": "make build_and_program",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Rebuild & Program",
+            "type": "shell",
+            "group": "build",
+            "command": "make rebuild_and_program",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "group": "build",
+            "command": "make build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Rebuild",
+            "type": "shell",
+            "group": "build",
+            "command": "make rebuild",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Program",
+            "type": "shell",
+            "group": "none",
+            "command": "make program",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "group": "none",
+            "command": "make clean",
+            "problemMatcher": []
+        },
+        {
+            "label": "Make output dirs",
+            "type": "shell",
+            "group": "none",
+            "command": "make dirs",
+            "problemMatcher": []
+        }
+    ]
+}

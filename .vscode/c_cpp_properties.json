@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "GNU ARM Embedded Toolchain",
+            "includePath": [
+                "${workspaceFolder}/",
+                "${workspaceFolder}/Libraries/CMSIS/",
+                "${workspaceFolder}/Libraries/SPL/",
+                "${workspaceFolder}/User/inc/",
+                "${workspaceFolder}/User/src/"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/*",
+                    "${workspaceFolder}/Libraries/CMSIS/*",
+                    "${workspaceFolder}/Libraries/SPL/*",
+                    "${workspaceFolder}/User/inc/*",
+                    "${workspaceFolder}/User/src/*"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "D:/Development/gcc-arm-none-eabi/bin/arm-none-eabi-gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

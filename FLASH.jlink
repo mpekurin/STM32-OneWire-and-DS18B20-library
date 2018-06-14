@@ -1,0 +1,7 @@
+h
+WaitHalt
+erase
+loadfile "Output/frw/firmware.hex"
+r
+g
+qc
