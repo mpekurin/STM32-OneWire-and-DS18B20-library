@@ -12,7 +12,7 @@
 #define OWU_WAIT_MARK           0x04
 
 #define OWU_RESET_BAUDRATE      9600
-#define OWU_DATA_BAUDRATE       150000
+#define OWU_DATA_BAUDRATE       115200
 #define OWU_BYTE_SIZE           8
 
 #define OWU_WAIT_TARGET_FRQ     1000.0
