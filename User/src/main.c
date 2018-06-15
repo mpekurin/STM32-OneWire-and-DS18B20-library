@@ -14,10 +14,11 @@ void TIM2_Init()
 
 int main()
 {
-	// TODO: remap USART1 to PB7 and PB6
 	// TODO: перенести
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
 	TIM2_Init();
 	TIM_Cmd(TIM2, ENABLE);

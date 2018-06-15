@@ -279,7 +279,7 @@ void OWU_TIM_Handler()
 {
     if (OWU_Flag.Waiting)
     {
-        if (/* TODO: !OWU_WaitCounter || */!(--OWU_WaitCounter))
+        if (!(--OWU_WaitCounter))
         {
             OWU_Flag.Waiting = 0;
             OWU_ProcessCurrentElement();

@@ -3,12 +3,12 @@
 
 #include "stm32f10x.h"
 
-#define OWU_USART               USART2              // Defines what USART to use
-#define OWU_USART_IRQn          USART2_IRQn         // Interrupt number of OWU_USART
-#define OWU_USART_IRQHandler    USART2_IRQHandler   // Exception handler of OWU_USART
-#define OWU_GPIO                GPIOA               // GPIOx, используемый USART
-#define OWU_TX_PIN              GPIO_Pin_2
-#define OWU_RX_PIN              GPIO_Pin_3
+#define OWU_USART               USART1              // Defines what USART to use
+#define OWU_USART_IRQn          USART1_IRQn         // Interrupt number of OWU_USART
+#define OWU_USART_IRQHandler    USART1_IRQHandler   // Exception handler of OWU_USART
+#define OWU_GPIO                GPIOB               // GPIOx, используемый USART
+#define OWU_TX_PIN              GPIO_Pin_6
+#define OWU_RX_PIN              GPIO_Pin_7
 
 #define OWU_SEQUENSE_MAX_SIZE   53                  // Максимальный размер последовательности в байтах
 #define OWU_BUFFER_MAX_SIZE     16                  // Максимальный размер буфера в байтах; каждый прочтенный с устройства бит занимает 1 байт в буфере
