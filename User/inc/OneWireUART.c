@@ -48,11 +48,11 @@ void OWU_USART_Init()
     // Настройка пинов USART
     GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_InitStruct.GPIO_Pin = OWU_TX_PIN;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(OWU_GPIO, &GPIO_InitStruct);
     GPIO_InitStruct.GPIO_Pin = OWU_RX_PIN;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(OWU_GPIO, &GPIO_InitStruct);
 
