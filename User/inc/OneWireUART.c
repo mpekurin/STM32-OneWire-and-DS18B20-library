@@ -15,11 +15,14 @@
 #define OWU_DATA_BAUDRATE       150000
 #define OWU_BYTE_SIZE           8
 
+#define OWU_WAIT_TARGET_FRQ     1000.0
+
 struct
 {
     unsigned Ready: 1;
     unsigned DeviceDetected: 1;
-} OWU_Flag = {0, 0};
+    unsigned Waiting: 1;
+} OWU_Flag = {0, 0, 0};
 
 uint8_t OWU_Sequence[OWU_SEQUENSE_MAX_SIZE];
 uint8_t OWU_SequenceWritePosition = 0;
@@ -27,7 +30,8 @@ uint8_t OWU_SequenceProcessPosition = 0;
 uint8_t OWU_Buffer[OWU_BUFFER_MAX_SIZE];
 uint8_t OWU_BufferWritePosition = 0;
 uint8_t OWU_BufferReadPosition = 0;
-volatile uint16_t OWU_WaitCounter;
+volatile uint32_t OWU_WaitCounter;
+float OWU_WaitCounterScaler;
 
 uint8_t OWU_IsDeviceDetected()
 {
@@ -63,17 +67,13 @@ void OWU_USART_Init()
     USART_Init(OWU_USART, &USART_InitStruct);
 }
 
-void OWU_TIM_Init()
+void OWU_WaitCounterScalerConfig(TIM_TypeDef* TIMx)
 {
-    // TODO: от чего тактируется таймер?
     SystemCoreClockUpdate();
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
-    TIM_TimeBaseInitStruct.TIM_Period = SystemCoreClock / 40000 - 1;
-    TIM_TimeBaseInitStruct.TIM_Prescaler = 40 - 1;
-    TIM_TimeBaseInit(OWU_TIM, &TIM_TimeBaseInitStruct);
+    OWU_WaitCounterScaler = SystemCoreClock / ((TIMx->ARR + 1) * (TIMx->PSC + 1) * OWU_WAIT_TARGET_FRQ);
 }
 
-void OWU_Init()
+void OWU_Init(TIM_TypeDef* TIMx)
 {
     // Настройка USART
     OWU_USART_Init();
@@ -84,13 +84,8 @@ void OWU_Init()
     NVIC_EnableIRQ(OWU_USART_IRQn);
 	USART_ITConfig(OWU_USART, USART_IT_TC, ENABLE);
 
-    // Настройка таймера
-    OWU_TIM_Init();
-
-    // Настройка прерываний таймера
-    TIM_ClearITPendingBit(OWU_TIM, TIM_IT_Update);
-    NVIC_EnableIRQ(OWU_TIM_IRQn);
-    TIM_ITConfig(OWU_TIM, TIM_IT_Update, ENABLE);
+    // Настройка множителя времени ожидания
+    OWU_WaitCounterScalerConfig(TIMx);
 }
 
 // TODO: переделать
@@ -206,9 +201,9 @@ void OWU_ProcessCurrentElement()
                 USART_SendData(OWU_USART, OWU_RESET_PULSE);
                 break;
             case OWU_WAIT_MARK:
-                OWU_WaitCounter = (((uint16_t) OWU_Sequence[++OWU_SequenceProcessPosition]) << OWU_BYTE_SIZE);
-                OWU_WaitCounter += (uint16_t) OWU_Sequence[++OWU_SequenceProcessPosition];
-                TIM_Cmd(OWU_TIM, ENABLE);
+                OWU_WaitCounter = (uint32_t) (OWU_WaitCounterScaler * ((((uint16_t) OWU_Sequence[OWU_SequenceProcessPosition + 1]) << OWU_BYTE_SIZE) + (uint16_t) OWU_Sequence[OWU_SequenceProcessPosition + 2])) + 1; // TODO: решить проблему с округлением вниз
+                OWU_SequenceProcessPosition += 2;
+                OWU_Flag.Waiting = 1;
                 break;
         }
         // FIXME: возможно прерывание после обработки, но до инкремента, все сломается
@@ -280,15 +275,13 @@ void OWU_USART_IRQHandler()
 }
 
 // TODO: изменять регистр вместо использования счетчика?
-void OWU_TIM_IRQHandler()
+void OWU_TIM_Handler()
 {
-    if (TIM_GetITStatus(OWU_TIM, TIM_IT_Update) == SET)
+    if (OWU_Flag.Waiting)
     {
-        TIM_ClearITPendingBit(OWU_TIM, TIM_IT_Update);
-
         if (/* TODO: !OWU_WaitCounter || */!(--OWU_WaitCounter))
         {
-            TIM_Cmd(OWU_TIM, DISABLE);
+            OWU_Flag.Waiting = 0;
             OWU_ProcessCurrentElement();
         }
     }

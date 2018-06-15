@@ -35,11 +35,11 @@ uint8_t DS18B20_IsFirstStart;
 uint16_t DS18B20_ConversionTime;
 uint16_t DS18B20_RequestPeriod;
 
-uint8_t DS18B20_Init(uint16_t requestPeriod_ms)
+uint8_t DS18B20_Init(TIM_TypeDef* TIMx, uint16_t requestPeriod_ms)
 {
     DS18B20_RequestPeriod = requestPeriod_ms;
     DS18B20_IsFirstStart = 1;
-    OWU_Init();
+    OWU_Init(TIMx);
 
     OWU_NewSequence();
     OWU_AddReset();
@@ -134,4 +134,9 @@ float DS18B20_GetRealTemperature()
         sign = -1;
     }
     return sign * (rawTemperature & DS18B20_VALUE_MASK) / 16.0;
+}
+
+void DS18B20_TIM_Handler()
+{
+    OWU_TIM_Handler();
 }
