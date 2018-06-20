@@ -3,11 +3,11 @@
 
 #include "stm32f10x.h"
 
-uint8_t DS18B20_Init(TIM_TypeDef* TIMx, uint16_t requestPeriod_ms); // Настройка всего нужного; минимальный период 95 мс; возвращает 1, если на линии обнаружено хотя бы одно устройство, иначе 0
-void DS18B20_ConvertTemperature();                                  // Запуск преобразования температуры
-uint8_t DS18B20_IsReady();                                          // Возвращает 1, если термометр опрошен, иначе 0
-uint16_t DS18B20_GetRawTemperature();                               // Возвращает необработанное значение температуры (Figure 4 in Datasheet); функция возвращает правильный результат только 1 раз после конвертации
-float DS18B20_GetRealTemperature();                                 // Возвращает обработанное значение температуры; функция возвращает правильный результат только 1 раз после конвертации
-void DS18B20_TIM_Handler();
+uint8_t DS18B20_Init(TIM_TypeDef* TIMx, uint16_t requestPeriod_ms); // Minimal period is 95 ms; return 1 if at least one device is found, otherwise return 0
+void DS18B20_ConvertTemperature();                                  // Start temperature conversion
+uint8_t DS18B20_IsReady();                                          // Return 1, if conversion is completed, otherwise returns 0
+uint16_t DS18B20_GetRawTemperature();                               // Return raw temperature value (see Figure 4 in Datasheet); function returns right value only once after conversion
+float DS18B20_GetRealTemperature();                                 // Return signed float temperature value; function returns right value only once after conversion
+void DS18B20_TIM_Handler();                                         // Must be inserted into TIMx_IRQHandler, where TIMx is timer passed to DS18B20_Init
 
 #endif // __DS18B20_H

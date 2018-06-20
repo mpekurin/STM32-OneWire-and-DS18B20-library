@@ -45,7 +45,6 @@ uint8_t OWU_IsReady()
 
 void OWU_USART_Init()
 {
-    // Настройка пинов USART
     GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_InitStruct.GPIO_Pin = OWU_TX_PIN;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
@@ -56,7 +55,6 @@ void OWU_USART_Init()
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(OWU_GPIO, &GPIO_InitStruct);
 
-    // Настройка USART
     USART_InitTypeDef USART_InitStruct;
     USART_InitStruct.USART_BaudRate = OWU_DATA_BAUDRATE;
     USART_InitStruct.USART_WordLength = USART_WordLength_8b;
@@ -75,20 +73,17 @@ void OWU_WaitCounterScalerConfig(TIM_TypeDef* TIMx)
 
 void OWU_Init(TIM_TypeDef* TIMx)
 {
-    // Настройка USART
     OWU_USART_Init();
-    USART_Cmd(OWU_USART, ENABLE);   // TODO: отключать для экономии энергии?
+    USART_Cmd(OWU_USART, ENABLE);   // TODO: turn off to minimize power consumption?
 
-    // Настройка прерываний UART
     USART_ClearITPendingBit(OWU_USART, USART_IT_TC);
     NVIC_EnableIRQ(OWU_USART_IRQn);
 	USART_ITConfig(OWU_USART, USART_IT_TC, ENABLE);
 
-    // Настройка множителя времени ожидания
     OWU_WaitCounterScalerConfig(TIMx);
 }
 
-// TODO: переделать
+// TODO: refactoring
 void OWU_USART_ChangeBaudRate(uint32_t USART_BaudRate)
 {
     uint16_t CR1_OVER8_Set = 0x8000;
@@ -201,22 +196,22 @@ void OWU_ProcessCurrentElement()
                 USART_SendData(OWU_USART, OWU_RESET_PULSE);
                 break;
             case OWU_WAIT_MARK:
-                OWU_WaitCounter = (uint32_t) (OWU_WaitCounterScaler * ((((uint16_t) OWU_Sequence[OWU_SequenceProcessPosition + 1]) << OWU_BYTE_SIZE) + (uint16_t) OWU_Sequence[OWU_SequenceProcessPosition + 2])) + 1; // TODO: решить проблему с округлением вниз
+                OWU_WaitCounter = (uint32_t) (OWU_WaitCounterScaler * ((((uint16_t) OWU_Sequence[OWU_SequenceProcessPosition + 1]) << OWU_BYTE_SIZE) + (uint16_t) OWU_Sequence[OWU_SequenceProcessPosition + 2])) + 1; // TODO: solve the problem with rounding down
                 OWU_SequenceProcessPosition += 2;
                 OWU_Flag.Waiting = 1;
                 break;
         }
-        // FIXME: возможно прерывание после обработки, но до инкремента, все сломается
+        // FIXME: interrupt handler call is possible after processing, but before the increment - everything will break
         ++OWU_SequenceProcessPosition;
     }
     else
     {
-        // TODO: сделать прерывание?
+        // TODO: move to handler?
         OWU_Flag.Ready = 1;
     }
 }
 
-// TODO: переименовать функцию или включить в OWU_ProcessCurrentElement, т. к. не совсем ясно, что делает
+// TODO: rename function or unite with OWU_ProcessCurrentElement
 void OWU_ProcessPreviousElement()
 {
     switch (OWU_Sequence[OWU_SequenceProcessPosition - 1])
@@ -274,7 +269,7 @@ void OWU_USART_IRQHandler()
     }
 }
 
-// TODO: изменять регистр вместо использования счетчика?
+// TODO: use register value instead of using counter?
 void OWU_TIM_Handler()
 {
     if (OWU_Flag.Waiting)

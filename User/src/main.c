@@ -3,7 +3,7 @@
 
 void TIM2_Init()
 {
-    // TODO: от чего тактируется таймер?
+    // FIXME: using SystemCoreClock is incorrect
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
     SystemCoreClockUpdate();
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
@@ -14,7 +14,7 @@ void TIM2_Init()
 
 int main()
 {
-	// TODO: перенести
+	// TODO: move?
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 	GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
