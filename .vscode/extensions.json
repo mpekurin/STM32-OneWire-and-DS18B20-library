@@ -3,6 +3,6 @@
 	// for the documentation about the extensions.json format
 	"recommendations": [
 		"marus25.cortex-debug",
-		"gruntfuggly.todo-tree"
+		"ms-vscode.cpptools"
 	]
 }
