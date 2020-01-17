@@ -1,5 +1,5 @@
 # STM32 OneWire library
-OneWire library allows you to write and read data to/from slave devices using any USART. Also it allows you to use delays between data transmissions using any timer so processor can do something useful at that time.
+OneWire library allows you to write and read data to/from slave devices using any USART. Also it allows you to use delays between data transmissions using any timer.
 
 ## How to initialize:
 1. Configure USART and pins in OneWireUART.h file.
